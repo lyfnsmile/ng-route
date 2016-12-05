@@ -1,9 +1,9 @@
-import { Routes } from '@angular/router';
+import { Route } from '@angular/router';
 
 import { newsDetailComponent } from './detail/detail.component'
 import { newsListComponent } from './list/list.component'
 
-export const newsRoutes: Routes = [{
+export const newsRoutes: Route[] = [{
     path: 'news',
     children: [{
         path: 'list',
