@@ -7,7 +7,7 @@
 那么，在实际开发中我们往往是借助成熟的路由模块，由它帮我们接管我们应用中的路由系统。在angular2中，框架为我们提供ngRouter模块，我们只需要定义一个个的路径和与之对应的组件
 ，其它的交给ngRouter模块就可以了。
 
-好了，废话不多说了，接下来在这篇文章中我会以一个Demo详细介绍Angular2路由的使用、通过路由设置实现验证和授权，以及子模块和子路由模块的异步加载之类的问题。
+好了，废话不多说了，接下来在这篇文章中我会以一个demo详细介绍Angular2路由的使用、通过路由设置实现验证和授权，以及子模块和子路由模块的异步加载之类的问题。
 
 ### <span id="jump">相关概念</span>
 下面是一些路由器中的关键词汇及其含义：
@@ -65,6 +65,8 @@
 
 在这个文件中我们先引入了Angular2的路由模块RouterModule，然后在下面的imports里面，通过RouterModule.forRoot(routes)用路由模块引用之前定义的路由设置。
 
+> RouterModule类的forRoot静态方法和提供的配置，被添加到imports数组中，提供该模块的路由信息。需要注意的是这个方法只适用在根模块中，永远不要在特性路由模块中调用RouterModule.forRoot！特性路由模块中调用RouterModule.forChild！！！
+
 `可能在开发中会有一些不太一样的配置，不过他们的实质都是一样，只是某些代码写在了不同 的地方，例如：`
 
 
@@ -100,6 +102,16 @@ export class AppRoutingModule {}
 ```
 
 然后在app.module.ts的imports直接引入就可以了。
+
+`再大型项目中，为了提高应用首次加载速度，我们可能会用到惰性加载模块的方式优化我们的应用，angular的路由模块为我们提供了这方面的功能，我们
+只需要在路由配置文件使用如下方式就可以就可以实现模块的惰性加载了`
+
+```
+{ path: 'news', loadChildren: 'app/news/news.module#NewsModule' }
+
+```
+
+在这里我们使用了route里的loadChildren属性，值为字符串形式，该字符串同时标记出了模块文件和模块类，两者用#分隔开。
 
 
 ### 还差一步
@@ -170,7 +182,7 @@ let page = this.route.snapshot.queryParams['page'];
 this.router.navigate(['/home'])
 ```
 
-以上就是angular中关于路由的简单用例，当然router模块里还有更多高级用法，例如用户身份进行路由拦截，基于路由器的组件惰性加载。在我研究完成后会在下一篇博客里再讲。
+以上就是angular中关于路由的简单用例，当然router模块里还有更多高级用法，如用户身份进行路由拦截。在我研究完成后会在下一篇博客里再讲。
 另外值得一提的是在这个例子中虽然我们讲的是angular2的路由，但是页涵盖了一些其他知识，比如angular的根模块和特性模块，指令的定义和使用，以及组件等知识。
 这些东西其实贯穿angular框架始终，所以如果其中有些不太懂的话，还需要再多了解了解。
 跟多实现细节请参考我写的demo，地址是[ng-route](https://github.com/lyfnsmile/ng-route)
