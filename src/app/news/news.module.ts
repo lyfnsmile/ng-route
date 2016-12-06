@@ -4,11 +4,13 @@ import { RouterModule } from '@angular/router';
 
 import { newsDetailComponent } from './detail/detail.component'
 import { newsListComponent } from './list/list.component'
+import {HighlightDirective} from './highlight.directive'
 
 @NgModule({
     declarations: [
         newsDetailComponent,
-        newsListComponent
+        newsListComponent,
+        HighlightDirective
     ],
     imports: [
         HttpModule,

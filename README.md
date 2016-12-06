@@ -170,8 +170,9 @@ let page = this.route.snapshot.queryParams['page'];
 this.router.navigate(['/home'])
 ```
 
-以上就是angular中关于路由的简单用例，当然router模块里还有更多高级用法，例如用户身份进行路由拦截，在我研究完成后会在下一篇博客里再讲。
-
+以上就是angular中关于路由的简单用例，当然router模块里还有更多高级用法，例如用户身份进行路由拦截，基于路由器的组件惰性加载。在我研究完成后会在下一篇博客里再讲。
+另外值得一提的是在这个例子中虽然我们讲的是angular2的路由，但是页涵盖了一些其他知识，比如angular的根模块和特性模块，指令的定义和使用，以及组件等知识。
+这些东西其实贯穿angular框架始终，所以如果其中有些不太懂的话，还需要再多了解了解。
 跟多实现细节请参考我写的demo，地址是[ng-route](https://github.com/lyfnsmile/ng-route)
 ### reference
 
