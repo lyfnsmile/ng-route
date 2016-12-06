@@ -1,2 +1,4 @@
 <router-outlet></router-outlet>
-<a routerLink="./news/detail/2">这是一个链接</a>
+<a routerLink="./home" routerLinkActive="active">这是一Home链接</a>
+<a [routerLink]="['/news/list']" [queryParams]="{size: 20, page: 1}">这是一个新闻列表链接</a>
+<a [routerLink]="['/news/detail',2]" routerLinkActive="active">这是一个新闻详情链接</a>

@@ -1,5 +1,5 @@
 import { Component,OnInit } from '@angular/core';
-import { ActivatedRoute, Router, Params } from '@angular/router';
+import { ActivatedRoute,Router, Params } from '@angular/router';
 @Component({
     selector: 'detail',
     templateUrl: './detail.component.html',
@@ -7,10 +7,16 @@ import { ActivatedRoute, Router, Params } from '@angular/router';
 })
 export class newsDetailComponent implements OnInit{
     title = 'app works!';
-    constructor(private route: ActivatedRoute){}
+    constructor(private router: Router,private route: ActivatedRoute){}
 
     ngOnInit(){
         let newsId = +this.route.snapshot.params['id'];
         console.log(newsId)
+        
+    }
+
+
+    goto(){
+        this.router.navigate(['/home'])
     }
 }

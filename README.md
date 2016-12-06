@@ -9,7 +9,7 @@
 
 好了，废话不多说了，接下来在这篇文章中我会以一个Demo详细介绍Angular2路由的使用、通过路由设置实现验证和授权，以及子模块和子路由模块的异步加载之类的问题。
 
-### 相关概念
+### <span id="jump">相关概念</span>
 下面是一些路由器中的关键词汇及其含义：
 
 |路由器部件|含义|
@@ -29,7 +29,7 @@
 ### 搭建开发环境
 
 我使用的是angular官方提供的开发工具[angular-cli](https://github.com/angular/angular-cli)。它能帮我们快速搭建一个ng2的项目。
-搭建完成后进入到src/app目录分别新建两个文件夹，我的如下:
+搭建完成后进入到src/app目录新建文件夹，我的如下:
 
 
 
@@ -46,12 +46,133 @@
 
 ### 配置相关路由规则
 
+设置完根目录后就开始书写我们的路由配置文件了，先贴一下我的配置文件，一般文件都命名为xxx.route.ts。
+
+![calender](./src/assets/config.png)
+
+![calender](./src/assets/route.png)
+
+在这份配置文件内我们从router模块中引入了[routes模块](#jump)，它其实就是一个路由列表类型Route[],请看第二份配置文件。而Route是Angular路由框架定义的一个接口。
+一个基础的路由包括2个属性:path和component,分别是这个路由对应的URL和组件。
+
+一般而言，通过这两个属性，就可以完成路由导航了。其他属性还包括redirectTo（重定向）,pathMatch(属性值有full和prefix两种方式)。
+
+
+### 使路由配置生效
+配置文件完成后，这时我们害无法看到效果，还需要告诉angular如何使用这份配置文件，一般而言都是在根模块下引入这份配置文件,不出意外也就是app.module.ts文件中来设置，具体配置请参考如下:
+
+![calender](./src/assets/module.png)
+
+在这个文件中我们先引入了Angular2的路由模块RouterModule，然后在下面的imports里面，通过RouterModule.forRoot(routes)用路由模块引用之前定义的路由设置。
+
+`可能在开发中会有一些不太一样的配置，不过他们的实质都是一样，只是某些代码写在了不同 的地方，例如：`
+
+
+```typescript
+
+import { NgModule }     from '@angular/core';
+import { RouterModule } from '@angular/router';
+@NgModule({
+  imports: [
+    RouterModule.forRoot([
+       {
+        path: '',
+        redirectTo: 'home',
+        pathMatch: 'full'
+       },
+       {
+            path: 'home',
+            component: HomeComponent
+       },
+        ...newsRoutes,
+
+       {
+            path: '**',
+            component: notFoundComponent
+       }
+    ],
+  exports: [
+    RouterModule
+  ]
+})
+export class AppRoutingModule {}
+
+```
+
+然后在app.module.ts的imports直接引入就可以了。
+
+
+### 还差一步
+
+到了这儿，我们的路由配置文件基本已经完工了，唯一还需要做的就是设置我们的组件的载入点，也就是告诉angular应该在哪里载入我们预先定义的组件
+，在angular1.X我们也有过类似的代码那就是ng-view指令。不过在angular2里面换了一个指令叫做router-outlet。一般而言，我们会把他写在我们
+的app.component.html文件中。
+
+
+好啦，如果你完成了以上步骤，这个时候可以启动应用在浏览器看到效果了。
 
 
 
 
+### 导航
+
+以上部分其实只是完成了一个基本的基于url导航的应用，在实际开发中，我们还会碰到各种各样的页面间的跳转需求。
+
+#### 超链接
+
+通常，我们会使用超链接完成页面见的跳转，而不是在浏览器里直接输入地址。 angular2里要完成这一步我们需要改造a标签，这和react-router很相似。如下:
+
+```
+<a routerLink="./home" routerLinkActive="active">这是一Home链接</a>
+
+```
+
+以上就是一个基本的超链接导航。其中routerLink就是路由地址。 routerLinkActive就是这个链接激活时为他添加的一个"active"的class，也包括子路由时同样会被激活。
 
 
+到了这儿，可能会有人说如果我们想要通过routerLink传递参数怎么办呢，不急哈！，我们慢慢来。
+
+
+传递参数的两种形式：
+1. 作为路由地址的一部分。如"./news/detail/2"，其中2就是要传递的参数。
+
+2. 作为url后面的查询字符串。如："./news/list?page=0&size=20",其中page=0&size=20就是要传递的参数。这种形式常见于分页或是搜索。
+
+
+针对第一种是这样解决的：
+```
+<a [routerLink]="['/news/detail',news.id]" routerLinkActive="active">
+```
+
+那么当这个参数传递出去后，我们又是如何获取的呢？
+
+在我们对应的组件内是这样拿到参数值的:
+```
+let newsId = this.route.snapshot.params['id'];
+```
+这段代码的意思就是获取当前路由快照的参数id。
+你们可以参考我写的detail组件代码，很清晰易懂的。
+
+
+第二种方式的传值和取值与第一种类似，我就不详细说了，直接贴代码吧。
+```	
+<a [routerLink]="['/news/list']" [queryParams]="{size: 20, page: 1}">
+
+let size = this.route.snapshot.queryParams['size'];
+let page = this.route.snapshot.queryParams['page'];
+```
+
+#### 代码内导航
+
+除了在我们的html里使用超链接的方式完成导航外，还会在组件里书写相关导航代码，那么在这种情形下如何做呢？？
+其实也很简单，和angular1.x类似，要完成代码内的路由跳转只需要这样做：
+```
+this.router.navigate(['/home'])
+```
+
+以上就是angular中关于路由的简单用例，当然router模块里还有更多高级用法，例如用户身份进行路由拦截，在我研究完成后会在下一篇博客里再讲。
+
+跟多实现细节请参考我写的demo，地址是[ng-route](https://github.com/lyfnsmile/ng-route)
 ### reference
 
 - [https://angular.cn/docs/ts/latest/guide/router.html](https://angular.cn/docs/ts/latest/guide/router.html)
